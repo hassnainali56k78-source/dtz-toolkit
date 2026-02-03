@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Dark Tech Zone Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .analytics-container {
+            padding: var(--spacing-xl);
+        }
+        
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+        
+        .date-input {
+            background: rgba(0, 10, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-sm) var(--spacing-md);
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+        
+        .date-input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+        }
+        
+        .date-separator {
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(45deg, var(--neon-green-dark), var(--neon-green));
+            color: black;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-hacker);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all var(--transition-medium);
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-intense);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 20, 0, 0.4), rgba(0, 10, 0, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-medium);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--neon-green);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .stat-card.large {
+            grid-column: span 2;
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .stat-title {
+            font-size: 1rem;
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            margin: 0;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            line-height: 1;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+        
+        .change-up {
+            color: var(--neon-green);
+        }
+        
+        .change-down {
+            color: var(--accent-red);
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .trend-line {
+            height: 2px;
+            flex: 1;
+            background: var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .trend-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: var(--neon-green);
+            animation: trend-animation 2s ease-in-out infinite;
+        }
+        
+        @keyframes trend-animation {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .chart-card {
+            background: rgba(0, 10, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .chart-title {
+            font-size: 1.1rem;
+            color: var(--neon-green);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .chart-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+        }
+        
+        .chart-placeholder i {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-md);
+            opacity: 0.5;
+        }
+        
+        .tool-list {
+            margin-top: var(--spacing-xl);
+        }
+        
+        .tool-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-md);
+        }
+        
+        .tool-list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .tool-list-table th {
+            background: rgba(0, 30, 0, 0.5);
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            font-weight: normal;
+            text-align: left;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tool-list-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid rgba(0, 51, 0, 0.5);
+            color: var(--text-secondary);
+        }
+        
+        .tool-list-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .tool-list-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .tool-name {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .tool-icon-small {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: var(--border-radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: var(--neon-green);
+        }
+        
+        .click-count {
+            font-family: var(--font-mono);
+            font-weight: bold;
+            color: var(--neon-green);
+        }
+        
+        .click-bar {
+            height: 8px;
+            background: rgba(0, 51, 0, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .click-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green-dark), var(--neon-green));
+            border-radius: 4px;
+        }
+        
+        .export-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .export-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            background: rgba(0, 20, 0, 0.5);
+            color: var(--neon-green);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-hacker);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all var(--transition-medium);
+        }
+        
+        .export-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--neon-green);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-muted);
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.5;
+        }
+        
+        /* Loading States */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--spacing-xxl);
+            color: var(--text-muted);
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card.large {
+                grid-column: span 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .analytics-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .date-range {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .tool-list-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .export-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="admin-sidebar">
+            <div class="sidebar-header">
+                <div class="admin-logo">
+                    <div class="admin-logo-shield">
+                        <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 0L40 12V36L20 48L0 36V12L20 0Z" fill="#00ff00" fill-opacity="0.2"/>
+                            <path d="M20 4L36 14V34L20 44L4 34V14L20 4Z" fill="none" stroke="#00ff00" stroke-width="2"/>
+                            <path d="M20 16L28 20V28L20 32L12 28V20L20 16Z" fill="#00ff00" fill-opacity="0.4"/>
+                            <circle cx="20" cy="24" r="3" fill="#00ff00"/>
+                        </svg>
+                    </div>
+                    <div class="admin-logo-text">
+                        <h2>DARK TECH ZONE</h2>
+                        <p class="admin-tagline">Analytics Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-user" id="admin-user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-details">
+                    <h3 id="admin-name">Admin User</h3>
+                    <p class="user-role">
+                        <span class="role-badge">ADMIN</span>
+                        <span id="admin-email">admin@darktech.zone</span>
+                    </p>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="/admin/admin-dashboard.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/admin/admin-tools.html" class="nav-item">
+                    <i class="fas fa-tools"></i>
+                    <span>Tools Management</span>
+                </a>
+                <a href="/admin/admin-analytics.html" class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="/admin/admin-settings.html" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+                <div class="nav-divider"></div>
+                <a href="/" class="nav-item">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>View Public Site</span>
+                </a>
+                <button id="admin-logout" class="nav-item logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </nav>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="admin-main">
+            <div class="admin-header">
+                <div class="header-title">
+                    <h1><i class="fas fa-chart-bar"></i> Analytics Dashboard</h1>
+                    <p class="header-subtitle">Track tool usage and user engagement</p>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <div class="analytics-container">
+                    <!-- Date Range Selector -->
+                    <div class="analytics-header">
+                        <h2 style="margin: 0;">Analytics Overview</h2>
+                        <div class="date-range">
+                            <input type="text" id="date-start" class="date-input" placeholder="Start Date">
+                            <span class="date-separator">→</span>
+                            <input type="text" id="date-end" class="date-input" placeholder="End Date">
+                            <button class="refresh-btn" id="refresh-analytics">
+                                <i class="fas fa-redo"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Total Users</h3>
+                                <i class="fas fa-users" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="total-users">0</div>
+                            <div class="stat-change">
+                                <div class="stat-trend">
+                                    <span class="change-up" id="user-change">+0%</span>
+                                    <div class="trend-line"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">vs previous period</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Tool Clicks</h3>
+                                <i class="fas fa-mouse-pointer" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="total-clicks">0</div>
+                            <div class="stat-change">
+                                <div class="stat-trend">
+                                    <span class="change-up" id="click-change">+0%</span>
+                                    <div class="trend-line"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">vs previous period</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Active Sessions</h3>
+                                <i class="fas fa-signal" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="active-sessions">0</div>
+                            <div class="stat-change">
+                                <div class="stat-trend">
+                                    <span class="change-up" id="session-change">+0%</span>
+                                    <div class="trend-line"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">current active</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Avg. Session</h3>
+                                <i class="fas fa-clock" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="avg-session">0m</div>
+                            <div class="stat-change">
+                                <div class="stat-trend">
+                                    <span class="change-up" id="duration-change">+0%</span>
+                                    <div class="trend-line"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">average duration</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-line"></i> Daily Clicks
+                                </h3>
+                            </div>
+                            <div class="chart-container" id="daily-clicks-chart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>Loading daily clicks chart...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-pie"></i> Tool Categories
+                                </h3>
+                            </div>
+                            <div class="chart-container" id="categories-chart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Loading categories chart...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Tools List -->
+                    <div class="tool-list">
+                        <div class="tool-list-header">
+                            <h3 style="margin: 0;">
+                                <i class="fas fa-fire"></i> Top Performing Tools
+                            </h3>
+                            <select id="top-tools-period" class="form-select" style="width: auto;">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30" selected>Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                                <option value="all">All Time</option>
+                            </select>
+                        </div>
+                        
+                        <div id="top-tools-container">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading top tools...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Export Actions -->
+                    <div class="export-actions">
+                        <button class="export-btn" id="export-csv">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                        <button class="export-btn" id="export-json">
+                            <i class="fas fa-file-code"></i> Export JSON
+                        </button>
+                        <button class="export-btn" id="reset-analytics">
+                            <i class="fas fa-trash-alt"></i> Reset Analytics
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script type="module" src="/admin/js/auth-guard.js"></script>
+    <script type="module">
+        import { db, rtdb } from '../../js/firebase-init.js';
+        
+        class AnalyticsManager {
+            constructor() {
+                this.charts = {};
+                this.data = {};
+                this.dateRange = {
+                    start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
+                    end: new Date()
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                // Initialize date picker
+                this.initDatePicker();
+                
+                // Load analytics data
+                this.loadAnalytics();
+                
+                // Setup event listeners
+                this.setupEventListeners();
+            }
+            
+            initDatePicker() {
+                flatpickr("#date-start", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: this.dateRange.start,
+                    onChange: (dates) => {
+                        if (dates[0]) {
+                            this.dateRange.start = dates[0];
+                            this.loadAnalytics();
+                        }
+                    }
+                });
+                
+                flatpickr("#date-end", {
+                    dateFormat: "Y-m-d",
+                    defaultDate: this.dateRange.end,
+                    onChange: (dates) => {
+                        if (dates[0]) {
+                            this.dateRange.end = dates[0];
+                            this.loadAnalytics();
+                        }
+                    }
+                });
+            }
+            
+            async loadAnalytics() {
+                try {
+                    this.showLoading(true);
+                    
+                    // Load all analytics data
+                    await Promise.all([
+                        this.loadStats(),
+                        this.loadDailyClicks(),
+                        this.loadToolCategories(),
+                        this.loadTopTools()
+                    ]);
+                    
+                    this.showLoading(false);
+                    
+                } catch (error) {
+                    console.error('Error loading analytics:', error);
+                    this.showError('Failed to load analytics data');
+                    this.showLoading(false);
+                }
+            }
+            
+            async loadStats() {
+                try {
+                    // Calculate date strings
+                    const currentStart = this.formatDate(this.dateRange.start);
+                    const currentEnd = this.formatDate(this.dateRange.end);
+                    
+                    // Previous period (same duration before start date)
+                    const duration = this.dateRange.end - this.dateRange.start;
+                    const prevStart = new Date(this.dateRange.start - duration);
+                    const prevEnd = new Date(this.dateRange.start - 1);
+                    
+                    const prevStartStr = this.formatDate(prevStart);
+                    const prevEndStr = this.formatDate(prevEnd);
+                    
+                    // Load current period data
+                    const currentData = await this.getPeriodData(currentStart, currentEnd);
+                    const prevData = await this.getPeriodData(prevStartStr, prevEndStr);
+                    
+                    // Update stats cards
+                    this.updateStatsCards(currentData, prevData);
+                    
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+            
+            async getPeriodData(startDate, endDate) {
+                const data = {
+                    users: 0,
+                    clicks: 0,
+                    sessions: 0,
+                    totalDuration: 0
+                };
+                
+                // Get daily users
+                const usersSnapshot = await rtdb.ref('daily_users').orderByKey().startAt(startDate).endAt(endDate).once('value');
+                usersSnapshot.forEach(dateSnapshot => {
+                    data.users += Object.keys(dateSnapshot.val() || {}).length;
+                });
+                
+                // Get daily clicks
+                const clicksSnapshot = await rtdb.ref('daily_clicks').orderByKey().startAt(startDate).endAt(endDate).once('value');
+                clicksSnapshot.forEach(dateSnapshot => {
+                    const dayClicks = dateSnapshot.val();
+                    Object.values(dayClicks || {}).forEach(count => {
+                        data.clicks += count;
+                    });
+                });
+                
+                // Get sessions in period
+                const sessionsSnapshot = await rtdb.ref('sessions').orderByChild('start_time')
+                    .startAt(new Date(startDate).getTime())
+                    .endAt(new Date(endDate).getTime())
+                    .once('value');
+                
+                let sessionCount = 0;
+                let totalDuration = 0;
+                
+                sessionsSnapshot.forEach(sessionSnapshot => {
+                    const session = sessionSnapshot.val();
+                    sessionCount++;
+                    
+                    if (session.duration) {
+                        totalDuration += session.duration;
+                    }
+                });
+                
+                data.sessions = sessionCount;
+                data.totalDuration = totalDuration;
+                
+                return data;
+            }
+            
+            updateStatsCards(currentData, prevData) {
+                // Total Users
+                document.getElementById('total-users').textContent = currentData.users.toLocaleString();
+                const userChange = this.calculateChange(currentData.users, prevData.users);
+                document.getElementById('user-change').textContent = userChange;
+                document.getElementById('user-change').className = userChange.startsWith('+') ? 'change-up' : 'change-down';
+                
+                // Total Clicks
+                document.getElementById('total-clicks').textContent = currentData.clicks.toLocaleString();
+                const clickChange = this.calculateChange(currentData.clicks, prevData.clicks);
+                document.getElementById('click-change').textContent = clickChange;
+                document.getElementById('click-change').className = clickChange.startsWith('+') ? 'change-up' : 'change-down';
+                
+                // Active Sessions (current only)
+                document.getElementById('active-sessions').textContent = currentData.sessions.toLocaleString();
+                const sessionChange = this.calculateChange(currentData.sessions, prevData.sessions);
+                document.getElementById('session-change').textContent = sessionChange;
+                document.getElementById('session-change').className = sessionChange.startsWith('+') ? 'change-up' : 'change-down';
+                
+                // Average Session Duration
+                const avgDuration = currentData.sessions > 0 ? Math.round(currentData.totalDuration / currentData.sessions / 60000) : 0;
+                const prevAvgDuration = prevData.sessions > 0 ? Math.round(prevData.totalDuration / prevData.sessions / 60000) : 0;
+                
+                document.getElementById('avg-session').textContent = `${avgDuration}m`;
+                const durationChange = this.calculateChange(avgDuration, prevAvgDuration);
+                document.getElementById('duration-change').textContent = durationChange;
+                document.getElementById('duration-change').className = durationChange.startsWith('+') ? 'change-up' : 'change-down';
+            }
+            
+            async loadDailyClicks() {
+                try {
+                    const startDate = this.formatDate(this.dateRange.start);
+                    const endDate = this.formatDate(this.dateRange.end);
+                    
+                    const snapshot = await rtdb.ref('daily_clicks')
+                        .orderByKey()
+                        .startAt(startDate)
+                        .endAt(endDate)
+                        .once('value');
+                    
+                    const dates = [];
+                    const clicks = [];
+                    
+                    snapshot.forEach(dateSnapshot => {
+                        const date = dateSnapshot.key;
+                        const dayClicks = dateSnapshot.val();
+                        let totalClicks = 0;
+                        
+                        Object.values(dayClicks || {}).forEach(count => {
+                            totalClicks += count;
+                        });
+                        
+                        dates.push(this.formatDateDisplay(date));
+                        clicks.push(totalClicks);
+                    });
+                    
+                    this.renderDailyClicksChart(dates, clicks);
+                    
+                } catch (error) {
+                    console.error('Error loading daily clicks:', error);
+                }
+            }
+            
+            async loadToolCategories() {
+                try {
+                    // Get all tools from Firestore
+                    const toolsSnapshot = await db.collection('tools').get();
+                    const categories = {};
+                    
+                    toolsSnapshot.forEach(doc => {
+                        const tool = doc.data();
+                        const category = tool.category || 'Uncategorized';
+                        categories[category] = (categories[category] || 0) + 1;
+                    });
+                    
+                    this.renderCategoriesChart(categories);
+                    
+                } catch (error) {
+                    console.error('Error loading tool categories:', error);
+                }
+            }
+            
+            async loadTopTools(period = '30') {
+                try {
+                    const container = document.getElementById('top-tools-container');
+                    
+                    // Get date range based on period
+                    let startDate;
+                    const endDate = new Date();
+                    
+                    switch (period) {
+                        case '7':
+                            startDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                            break;
+                        case '30':
+                            startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+                            break;
+                        case '90':
+                            startDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+                            break;
+                        default:
+                            startDate = new Date(0); // All time
+                    }
+                    
+                    const startDateStr = this.formatDate(startDate);
+                    const endDateStr = this.formatDate(endDate);
+                    
+                    // Get click data
+                    const clicksSnapshot = await rtdb.ref('daily_clicks')
+                        .orderByKey()
+                        .startAt(startDateStr)
+                        .endAt(endDateStr)
+                        .once('value');
+                    
+                    // Aggregate clicks by tool
+                    const toolClicks = {};
+                    
+                    clicksSnapshot.forEach(dateSnapshot => {
+                        const dayClicks = dateSnapshot.val();
+                        Object.entries(dayClicks || {}).forEach(([toolId, count]) => {
+                            toolClicks[toolId] = (toolClicks[toolId] || 0) + count;
+                        });
+                    });
+                    
+                    // Get tool details
+                    const toolsSnapshot = await db.collection('tools').get();
+                    const toolsData = [];
+                    
+                    toolsSnapshot.forEach(doc => {
+                        const tool = doc.data();
+                        tool.id = doc.id;
+                        tool.clicks = toolClicks[doc.id] || 0;
+                        toolsData.push(tool);
+                    });
+                    
+                    // Sort by clicks
+                    toolsData.sort((a, b) => b.clicks - a.clicks);
+                    
+                    // Take top 10
+                    const topTools = toolsData.slice(0, 10);
+                    
+                    this.renderTopTools(topTools);
+                    
+                } catch (error) {
+                    console.error('Error loading top tools:', error);
+                    document.getElementById('top-tools-container').innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Failed to load top tools</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            renderDailyClicksChart(dates, clicks) {
+                const ctx = document.createElement('canvas');
+                const container = document.getElementById('daily-clicks-chart');
+                container.innerHTML = '';
+                container.appendChild(ctx);
+                
+                // Destroy existing chart if it exists
+                if (this.charts.dailyClicks) {
+                    this.charts.dailyClicks.destroy();
+                }
+                
+                this.charts.dailyClicks = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Daily Clicks',
+                            data: clicks,
+                            borderColor: '#00ff00',
+                            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#00ff00',
+                            pointBorderColor: '#000',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#ccc',
+                                    font: {
+                                        family: 'Courier New'
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 51, 0, 0.3)'
+                                },
+                                ticks: {
+                                    color: '#888'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 51, 0, 0.3)'
+                                },
+                                ticks: {
+                                    color: '#888'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            renderCategoriesChart(categories) {
+                const ctx = document.createElement('canvas');
+                const container = document.getElementById('categories-chart');
+                container.innerHTML = '';
+                container.appendChild(ctx);
+                
+                // Destroy existing chart if it exists
+                if (this.charts.categories) {
+                    this.charts.categories.destroy();
+                }
+                
+                const colors = [
+                    '#00ff00', '#00aaff', '#aa00ff', '#ffff00', '#ff3333',
+                    '#00cc00', '#0088cc', '#8800cc', '#cccc00', '#cc0000'
+                ];
+                
+                this.charts.categories = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categories),
+                        datasets: [{
+                            data: Object.values(categories),
+                            backgroundColor: colors,
+                            borderColor: colors.map(color => color + 'cc'),
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#ccc',
+                                    font: {
+                                        family: 'Courier New',
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            renderTopTools(tools) {
+                const container = document.getElementById('top-tools-container');
+                
+                if (tools.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>No tool usage data available</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Find max clicks for percentage calculation
+                const maxClicks = Math.max(...tools.map(t => t.clicks));
+                
+                let html = `
+                    <table class="tool-list-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Type</th>
+                                <th>Clicks</th>
+                                <th style="width: 200px;">Popularity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                tools.forEach(tool => {
+                    const percentage = maxClicks > 0 ? (tool.clicks / maxClicks) * 100 : 0;
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <div class="tool-name">
+                                    <div class="tool-icon-small">
+                                        <i class="${tool.icon || 'fas fa-cube'}"></i>
+                                    </div>
+                                    <div>
+                                        <strong>${this.escapeHtml(tool.name)}</strong><br>
+                                        <small style="color: var(--text-muted);">${tool.category || 'Uncategorized'}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="type-badge ${tool.type === 'hosted' ? 'type-hosted' : 'type-direct'}">
+                                    ${tool.type === 'hosted' ? 'Hosted' : 'Direct'}
+                                </span>
+                            </td>
+                            <td class="click-count">${tool.clicks.toLocaleString()}</td>
+                            <td>
+                                <div class="click-bar">
+                                    <div class="click-fill" style="width: ${percentage}%"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">${percentage.toFixed(1)}%</small>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = html;
+            }
+            
+            setupEventListeners() {
+                // Refresh button
+                document.getElementById('refresh-analytics').addEventListener('click', () => this.loadAnalytics());
+                
+                // Top tools period selector
+                document.getElementById('top-tools-period').addEventListener('change', (e) => {
+                    this.loadTopTools(e.target.value);
+                });
+                
+                // Export buttons
+                document.getElementById('export-csv').addEventListener('click', () => this.exportData('csv'));
+                document.getElementById('export-json').addEventListener('click', () => this.exportData('json'));
+                
+                // Reset analytics
+                document.getElementById('reset-analytics').addEventListener('click', () => {
+                    if (confirm('WARNING: This will delete ALL analytics data. This action cannot be undone.\n\nAre you sure?')) {
+                        this.resetAnalytics();
+                    }
+                });
+            }
+            
+            async exportData(format) {
+                try {
+                    // Collect data for export
+                    const exportData = {
+                        exportedAt: new Date().toISOString(),
+                        dateRange: {
+                            start: this.dateRange.start.toISOString(),
+                            end: this.dateRange.end.toISOString()
+                        },
+                        stats: await this.getExportStats(),
+                        topTools: await this.getTopToolsData()
+                    };
+                    
+                    let content, mimeType, fileName;
+                    
+                    if (format === 'csv') {
+                        content = this.convertToCSV(exportData);
+                        mimeType = 'text/csv';
+                        fileName = `analytics_${this.formatDate(new Date())}.csv`;
+                    } else {
+                        content = JSON.stringify(exportData, null, 2);
+                        mimeType = 'application/json';
+                        fileName = `analytics_${this.formatDate(new Date())}.json`;
+                    }
+                    
+                    // Create download link
+                    const blob = new Blob([content], { type: mimeType });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    this.showSuccess(`Analytics exported as ${format.toUpperCase()}`);
+                    
+                } catch (error) {
+                    console.error('Error exporting data:', error);
+                    this.showError('Failed to export data');
+                }
+            }
+            
+            async getExportStats() {
+                const currentStart = this.formatDate(this.dateRange.start);
+                const currentEnd = this.formatDate(this.dateRange.end);
+                
+                return await this.getPeriodData(currentStart, currentEnd);
+            }
+            
+            async getTopToolsData() {
+                const toolsSnapshot = await db.collection('tools').get();
+                const toolClicks = {};
+                
+                // Get all-time clicks
+                const clicksSnapshot = await rtdb.ref('tool_clicks').once('value');
+                clicksSnapshot.forEach(toolSnapshot => {
+                    toolClicks[toolSnapshot.key] = toolSnapshot.val().total || 0;
+                });
+                
+                const tools = [];
+                toolsSnapshot.forEach(doc => {
+                    const tool = doc.data();
+                    tool.id = doc.id;
+                    tool.clicks = toolClicks[doc.id] || 0;
+                    tools.push(tool);
+                });
+                
+                return tools.sort((a, b) => b.clicks - a.clicks);
+            }
+            
+            convertToCSV(data) {
+                // Convert stats to CSV
+                let csv = 'Category,Metric,Value\n';
+                csv += `Date Range,Start,${data.dateRange.start}\n`;
+                csv += `Date Range,End,${data.dateRange.end}\n`;
+                csv += `Stats,Total Users,${data.stats.users}\n`;
+                csv += `Stats,Total Clicks,${data.stats.clicks}\n`;
+                csv += `Stats,Total Sessions,${data.stats.sessions}\n`;
+                csv += `Stats,Avg Session Duration,${data.stats.totalDuration / data.stats.sessions / 60000} minutes\n\n`;
+                
+                // Add top tools
+                csv += 'Tool ID,Name,Category,Type,Clicks\n';
+                data.topTools.forEach(tool => {
+                    csv += `${tool.id},${tool.name},${tool.category || ''},${tool.type},${tool.clicks}\n`;
+                });
+                
+                return csv;
+            }
+            
+            async resetAnalytics() {
+                try {
+                    // Show loading
+                    const resetBtn = document.getElementById('reset-analytics');
+                    const originalText = resetBtn.innerHTML;
+                    resetBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resetting...';
+                    resetBtn.disabled = true;
+                    
+                    // Delete all analytics data
+                    await rtdb.ref().set(null);
+                    
+                    this.showSuccess('Analytics data reset successfully');
+                    await this.loadAnalytics();
+                    
+                } catch (error) {
+                    console.error('Error resetting analytics:', error);
+                    this.showError('Failed to reset analytics');
+                } finally {
+                    const resetBtn = document.getElementById('reset-analytics');
+                    resetBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Reset Analytics';
+                    resetBtn.disabled = false;
+                }
+            }
+            
+            showLoading(show) {
+                const container = document.querySelector('.analytics-container');
+                
+                if (show) {
+                    const loading = document.createElement('div');
+                    loading.className = 'loading';
+                    loading.innerHTML = `
+                        <div class="loading-spinner"></div>
+                        <p>Loading analytics data...</p>
+                    `;
+                    loading.id = 'analytics-loading';
+                    container.appendChild(loading);
+                } else {
+                    const loading = document.getElementById('analytics-loading');
+                    if (loading) loading.remove();
+                }
+            }
+            
+            showSuccess(message) {
+                this.showAlert(message, 'success');
+            }
+            
+            showError(message) {
+                this.showAlert(message, 'error');
+            }
+            
+            showAlert(message, type) {
+                const alert = document.createElement('div');
+                alert.className = `admin-alert alert-${type}`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                // Add to page
+                document.querySelector('.analytics-container').insertBefore(alert, document.querySelector('.analytics-header'));
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+            
+            formatDate(date) {
+                return date.toISOString().split('T')[0];
+            }
+            
+            formatDateDisplay(dateStr) {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            }
+            
+            calculateChange(current, previous) {
+                if (previous === 0) return current > 0 ? '+100%' : '0%';
+                const change = ((current - previous) / previous) * 100;
+                return (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // Initialize analytics manager
+        const analyticsManager = new AnalyticsManager();
+        window.analyticsManager = analyticsManager;
+    </script>
+</body>
+</html>
