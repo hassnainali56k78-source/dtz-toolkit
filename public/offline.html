@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Dark Tech Zone</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .offline-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .offline-icon {
+            font-size: 80px;
+            color: #ff3333;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .offline-title {
+            color: #ff3333;
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .offline-message {
+            color: #00cc00;
+            font-size: 18px;
+            max-width: 600px;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .offline-actions {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            border: 1px solid #00ff00;
+            background: rgba(0, 20, 0, 0.3);
+            color: #00ff00;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+        
+        .action-btn:hover {
+            background: #00ff00;
+            color: #000;
+        }
+        
+        .connection-status {
+            margin-top: 40px;
+            padding: 15px;
+            border: 1px solid #003300;
+            border-radius: 4px;
+            background: rgba(0, 10, 0, 0.5);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #003300;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            color: #00aa00;
+        }
+        
+        .status-value {
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .retry-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #003300;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .network-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #003300;
+            border-top: 2px solid #00ff00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="offline-icon">
+            <i class="fas fa-unlink"></i>
+        </div>
+        
+        <h1 class="offline-title">NETWORK CONNECTION LOST</h1>
+        
+        <div class="offline-message">
+            The Dark Tech Zone Toolkit requires an active internet connection to function.
+            Please check your network connection and try again.
+        </div>
+        
+        <div class="connection-status">
+            <div class="status-item">
+                <span class="status-label">Connection Status:</span>
+                <span class="status-value" id="conn-status">Checking...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Last Online:</span>
+                <span class="status-value" id="last-online">Unknown</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Local Time:</span>
+                <span class="status-value" id="local-time">--:--:--</span>
+            </div>
+        </div>
+        
+        <div class="offline-actions">
+            <button class="action-btn" onclick="window.location.reload()">
+                <i class="fas fa-redo"></i> Retry Connection
+            </button>
+            <button class="action-btn" onclick="window.location.href='/'">
+                <i class="fas fa-home"></i> Return to Toolkit
+            </button>
+            <button class="action-btn" onclick="checkNetworkStatus()">
+                <i class="fas fa-wifi"></i> Check Network
+            </button>
+        </div>
+        
+        <div style="margin-top: 40px; color: #00aa00; font-size: 14px;">
+            <i class="fas fa-info-circle"></i>
+            Some tools may work offline if previously cached.
+        </div>
+    </div>
+
+    <script>
+        // Update local time
+        function updateLocalTime() {
+            const now = new Date();
+            document.getElementById('local-time').textContent = 
+                now.toLocaleTimeString();
+        }
+        
+        // Check network status
+        function checkNetworkStatus() {
+            const statusEl = document.getElementById('conn-status');
+            const retryBtn = document.querySelector('.action-btn');
+            const originalText = retryBtn.innerHTML;
+            
+            // Show checking status
+            statusEl.innerHTML = 'Checking <span class="network-spinner"></span>';
+            
+            // Simulate network check
+            setTimeout(() => {
+                if (navigator.onLine) {
+                    statusEl.innerHTML = '<span style="color:#00ff00">Online ✓</span>';
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    statusEl.innerHTML = '<span style="color:#ff3333">Offline ✗</span>';
+                    retryBtn.innerHTML = originalText;
+                }
+            }, 2000);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update time every second
+            updateLocalTime();
+            setInterval(updateLocalTime, 1000);
+            
+            // Set last online time
+            const lastOnline = localStorage.getItem('last_online_timestamp');
+            if (lastOnline) {
+                const date = new Date(parseInt(lastOnline));
+                document.getElementById('last-online').textContent = 
+                    date.toLocaleTimeString();
+            }
+            
+            // Check initial status
+            if (navigator.onLine) {
+                document.getElementById('conn-status').innerHTML = 
+                    '<span style="color:#00ff00">Online ✓</span>';
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                document.getElementById('conn-status').innerHTML = 
+                    '<span style="color:#ff3333">Offline ✗</span>';
+            }
+            
+            // Listen for online/offline events
+            window.addEventListener('online', () => {
+                localStorage.setItem('last_online_timestamp', Date.now().toString());
+                window.location.href = '/';
+            });
+            
+            window.addEventListener('offline', () => {
+                document.getElementById('conn-status').innerHTML = 
+                    '<span style="color:#ff3333">Offline ✗</span>';
+            });
+        });
+    </script>
+</body>
+</html>
