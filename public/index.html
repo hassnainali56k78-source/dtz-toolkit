@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Tech Zone Toolkit</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-green-dark: #00cc00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000a00;
+            --border-color: #003300;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --accent-red: #ff3333;
+            --accent-blue: #00aaff;
+            --accent-purple: #aa00ff;
+            --shadow-glow: 0 0 10px rgba(0, 255, 0, 0.5);
+            --shadow-intense: 0 0 20px rgba(0, 255, 0, 0.7);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --spacing-xs: 5px;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --spacing-xxl: 50px;
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Segoe UI', sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-lg);
+            background: rgba(0, 20, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--spacing-lg);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .logo-shield {
+            width: 40px;
+            height: 48px;
+            filter: drop-shadow(var(--shadow-glow));
+        }
+        
+        .logo-text h1 {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+            font-family: var(--font-mono);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .tagline {
+            color: var(--neon-green-dark);
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+        
+        .whatsapp-channel {
+            display: flex;
+            align-items: center;
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all var(--transition-medium);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.4);
+        }
+        
+        /* Broadcast Message */
+        .broadcast-container {
+            background: linear-gradient(90deg, rgba(0, 51, 0, 0.5), rgba(0, 20, 0, 0.8));
+            border: 1px solid var(--neon-green);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            animation: pulse 2s infinite;
+        }
+        
+        .broadcast-container:hover {
+            background: linear-gradient(90deg, rgba(0, 102, 0, 0.5), rgba(0, 40, 0, 0.8));
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: var(--shadow-glow); }
+            50% { box-shadow: var(--shadow-intense); }
+            100% { box-shadow: var(--shadow-glow); }
+        }
+        
+        .broadcast-icon {
+            color: var(--neon-green);
+            font-size: 1.2rem;
+        }
+        
+        .broadcast-message {
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            flex: 1;
+        }
+        
+        /* Welcome Message */
+        .welcome-container {
+            background: rgba(0, 10, 0, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            text-align: center;
+        }
+        
+        .welcome-container h2 {
+            color: var(--neon-green);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            font-family: var(--font-mono);
+        }
+        
+        /* Search Box */
+        .search-container {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: var(--spacing-lg);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-green);
+        }
+        
+        #tool-search {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 50px;
+            background: rgba(0, 10, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all var(--transition-medium);
+        }
+        
+        #tool-search:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .search-counter {
+            position: absolute;
+            right: var(--spacing-md);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            background: rgba(0, 20, 0, 0.5);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .tool-card {
+            background: linear-gradient(135deg, rgba(0, 20, 0, 0.4), rgba(0, 10, 0, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-medium);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-card:hover {
+            border-color: var(--neon-green);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-5px);
+        }
+        
+        .tool-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--neon-green);
+        }
+        
+        .tool-type-badge {
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .type-hosted {
+            background: rgba(0, 170, 255, 0.2);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+        }
+        
+        .type-external {
+            background: rgba(170, 0, 255, 0.2);
+            color: var(--accent-purple);
+            border: 1px solid var(--accent-purple);
+        }
+        
+        .tool-title {
+            color: var(--neon-green);
+            margin-bottom: var(--spacing-sm);
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+        }
+        
+        .tool-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+            font-size: 0.95rem;
+        }
+        
+        .tool-category {
+            display: inline-block;
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--neon-green);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: var(--font-mono);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .tool-version {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .tool-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: var(--spacing-md);
+        }
+        
+        .tool-open-btn, .tool-info-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .tool-open-btn {
+            background: linear-gradient(45deg, var(--neon-green-dark), var(--neon-green));
+            color: black;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .tool-open-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-intense);
+        }
+        
+        .tool-info-btn {
+            background: rgba(0, 20, 0, 0.5);
+            color: var(--neon-green);
+            border: 1px solid var(--border-color);
+            width: 40px;
+            justify-content: center;
+        }
+        
+        .tool-info-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--neon-green);
+        }
+        
+        /* Loading States */
+        .loading-spinner {
+            text-align: center;
+            padding: var(--spacing-xxl);
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto var(--spacing-lg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* No Tools Found */
+        .no-tools-found, .error-message {
+            text-align: center;
+            padding: var(--spacing-xxl);
+            background: rgba(0, 10, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            grid-column: 1 / -1;
+        }
+        
+        .no-tools-icon, .error-icon {
+            font-size: 3rem;
+            color: var(--neon-green);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .error-icon {
+            color: var(--accent-red);
+        }
+        
+        .error-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+            margin-top: var(--spacing-lg);
+        }
+        
+        .retry-btn, .offline-btn, .refresh-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: 1px solid var(--neon-green);
+            background: rgba(0, 20, 0, 0.5);
+            color: var(--neon-green);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+        }
+        
+        .retry-btn:hover, .offline-btn:hover, .refresh-btn:hover {
+            background: var(--neon-green);
+            color: black;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-lg);
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            margin-top: var(--spacing-xl);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        .footer-link {
+            color: var(--neon-green);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Maintenance Mode */
+        .maintenance-mode {
+            background: linear-gradient(135deg, #332200, #663300);
+            border: 1px solid #ff9900;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-xl);
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            color: #ffcc00;
+        }
+        
+        .maintenance-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .maintenance-timer {
+            margin-top: var(--spacing-md);
+            color: #ff9900;
+            font-family: var(--font-mono);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+            }
+            
+            .search-counter {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                margin-top: var(--spacing-sm);
+                display: inline-block;
+            }
+            
+            .broadcast-message {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-container">
+                <div class="logo-shield">
+                    <svg width="40" height="48" viewBox="0 0 40 48" fill="none">
+                        <path d="M20 0L40 12V36L20 48L0 36V12L20 0Z" fill="#00ff00" fill-opacity="0.2"/>
+                        <path d="M20 4L36 14V34L20 44L4 34V14L20 4Z" fill="none" stroke="#00ff00" stroke-width="2"/>
+                        <path d="M20 16L28 20V28L20 32L12 28V20L20 16Z" fill="#00ff00" fill-opacity="0.4"/>
+                        <circle cx="20" cy="24" r="3" fill="#00ff00"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>Dark Tech Zone</h1>
+                    <p class="tagline">Powered by Dark Tech Zone</p>
+                </div>
+            </div>
+            
+            <div class="whatsapp-channel">
+                <a href="#" id="whatsapp-channel-link" target="_blank" class="whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> WhatsApp Channel
+                </a>
+            </div>
+        </header>
+
+        <!-- Broadcast Message -->
+        <div class="broadcast-container" id="broadcast-container">
+            <div class="broadcast-icon">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="broadcast-message" id="broadcast-message">
+                Loading broadcast...
+            </div>
+        </div>
+
+        <!-- Welcome Message -->
+        <div class="welcome-container" id="welcome-container">
+            <h2><i class="fas fa-terminal"></i> Welcome to the Toolkit</h2>
+            <p id="welcome-message">Loading welcome message...</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="tool-search" placeholder="Search tools by name or category...">
+                <div class="search-counter">
+                    <span id="tool-count">0</span> tools available
+                </div>
+            </div>
+        </div>
+
+        <!-- Tools Grid -->
+        <div class="tools-grid" id="tools-grid">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Loading tools from Dark Tech Zone...</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content" id="footer-content">
+                <p>© <span id="current-year"></span> Dark Tech Zone Toolkit. All rights reserved.</p>
+                <p><a href="/report.html" class="footer-link"><i class="fas fa-bug"></i> Report Issue</a></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Font Awesome Icons -->
+    <script>
+        // Load Font Awesome dynamically
+        const faLink = document.createElement('link');
+        faLink.rel = 'stylesheet';
+        faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(faLink);
+    </script>
+
+    <!-- Combined JavaScript -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD369ImYdPQcgnystU9KQqs5Rhji07MLOw",
+            authDomain: "dtz-toolkit.firebaseapp.com",
+            databaseURL: "https://dtz-toolkit-default-rtdb.firebaseio.com",
+            projectId: "dtz-toolkit",
+            storageBucket: "dtz-toolkit.firebasestorage.app",
+            messagingSenderId: "260322206338",
+            appId: "1:260322206338:web:79049e8cc7a9fe54824a9b"
+        };
+
+        // Initialize Firebase
+        let app, auth, db, rtdb;
+        
+        function initializeFirebase() {
+            try {
+                // Check if Firebase is available
+                if (typeof firebase === 'undefined') {
+                    console.error('Firebase not loaded');
+                    return false;
+                }
+                
+                // Initialize Firebase
+                app = firebase.initializeApp(firebaseConfig);
+                console.log('Firebase initialized');
+                
+                // Initialize services
+                auth = firebase.auth();
+                db = firebase.firestore();
+                rtdb = firebase.database();
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                return false;
+            }
+        }
+
+        // Tools Loader Class
+        class ToolsLoader {
+            constructor() {
+                this.tools = [];
+                this.filteredTools = [];
+                this.categories = new Set();
+                this.isLoading = false;
+                this.lastUpdate = null;
+                this.toolsGrid = document.getElementById('tools-grid');
+                this.toolSearch = document.getElementById('tool-search');
+                this.toolCount = document.getElementById('tool-count');
+                
+                if (this.toolsGrid) {
+                    this.init();
+                }
+            }
+            
+            async init() {
+                // Initialize Firebase
+                if (!initializeFirebase()) {
+                    this.showError('Failed to initialize database');
+                    return;
+                }
+                
+                // Load tools
+                await this.loadTools();
+                
+                // Load settings
+                await this.loadSettings();
+                
+                // Setup search
+                if (this.toolSearch) {
+                    this.toolSearch.addEventListener('input', () => this.filterTools());
+                }
+                
+                // Update year
+                document.getElementById('current-year').textContent = new Date().getFullYear();
+                
+                // Setup broadcast click to dismiss
+                document.getElementById('broadcast-container')?.addEventListener('click', function() {
+                    this.style.display = 'none';
+                });
+                
+                // Handle offline detection
+                window.addEventListener('offline', () => {
+                    window.location.href = '/offline.html';
+                });
+            }
+            
+            async loadTools() {
+                const cacheKey = 'dtz_tools_cache';
+                const cacheTime = 'dtz_tools_cache_time';
+                
+                // Check cache first
+                const cached = localStorage.getItem(cacheKey);
+                const cachedTime = localStorage.getItem(cacheTime);
+                
+                if (cached && cachedTime) {
+                    const age = Date.now() - parseInt(cachedTime);
+                    if (age < 10 * 60 * 1000) { // 10 minutes cache
+                        try {
+                            this.tools = JSON.parse(cached);
+                            this.processTools();
+                            return;
+                        } catch (e) {
+                            console.warn('Cache parse error');
+                        }
+                    }
+                }
+                
+                this.showLoading(true);
+                
+                try {
+                    // Fetch from Firestore
+                    const snapshot = await db.collection('tools')
+                        .where('enabled', '==', true)
+                        .orderBy('order', 'asc')
+                        .get();
+                    
+                    if (snapshot.empty) {
+                        this.showNoTools();
+                        return;
+                    }
+                    
+                    this.tools = [];
+                    snapshot.forEach(doc => {
+                        const tool = doc.data();
+                        tool.id = doc.id;
+                        this.tools.push(tool);
+                        
+                        if (tool.category) {
+                            this.categories.add(tool.category);
+                        }
+                    });
+                    
+                    // Cache results
+                    localStorage.setItem(cacheKey, JSON.stringify(this.tools));
+                    localStorage.setItem(cacheTime, Date.now().toString());
+                    this.lastUpdate = new Date();
+                    
+                    this.processTools();
+                    
+                } catch (error) {
+                    console.error('Error loading tools:', error);
+                    this.showError();
+                    
+                    // Try cache even if stale
+                    if (cached) {
+                        try {
+                            this.tools = JSON.parse(cached);
+                            this.processTools();
+                        } catch (e) {
+                            this.showNoTools();
+                        }
+                    }
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+            
+            async loadSettings() {
+                try {
+                    const settingsSnapshot = await db.collection('settings').doc('global').get();
+                    
+                    if (settingsSnapshot.exists) {
+                        const settings = settingsSnapshot.data();
+                        
+                        // Update welcome message
+                        const welcomeMsg = document.getElementById('welcome-message');
+                        if (welcomeMsg && settings.welcomeMessage) {
+                            welcomeMsg.textContent = settings.welcomeMessage;
+                        }
+                        
+                        // Update broadcast message
+                        const broadcastMsg = document.getElementById('broadcast-message');
+                        const broadcastContainer = document.getElementById('broadcast-container');
+                        if (broadcastMsg && settings.broadcastMessage) {
+                            broadcastMsg.innerHTML = settings.broadcastMessage;
+                            if (settings.broadcastMessage.trim()) {
+                                broadcastContainer.style.display = 'flex';
+                            }
+                        }
+                        
+                        // Update WhatsApp link
+                        const whatsappLink = document.getElementById('whatsapp-channel-link');
+                        if (whatsappLink && settings.whatsappChannel) {
+                            whatsappLink.href = settings.whatsappChannel;
+                        }
+                        
+                        // Update footer
+                        const footerContent = document.getElementById('footer-content');
+                        if (footerContent && settings.footerText) {
+                            footerContent.innerHTML = settings.footerText;
+                        }
+                        
+                        // Check maintenance mode
+                        if (settings.maintenanceMode) {
+                            this.showMaintenanceMode(settings.maintenanceMessage);
+                        }
+                    }
+                    
+                } catch (error) {
+                    console.error('Error loading settings:', error);
+                }
+            }
+            
+            processTools() {
+                this.filteredTools = [...this.tools];
+                
+                if (this.toolCount) {
+                    this.toolCount.textContent = this.filteredTools.length;
+                }
+                
+                this.renderTools();
+            }
+            
+            filterTools() {
+                const searchTerm = this.toolSearch.value.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    this.filteredTools = [...this.tools];
+                } else {
+                    this.filteredTools = this.tools.filter(tool => {
+                        const nameMatch = tool.name.toLowerCase().includes(searchTerm);
+                        const descMatch = tool.description.toLowerCase().includes(searchTerm);
+                        const categoryMatch = tool.category?.toLowerCase().includes(searchTerm);
+                        const tagsMatch = tool.tags?.some(tag => tag.toLowerCase().includes(searchTerm));
+                        
+                        return nameMatch || descMatch || categoryMatch || tagsMatch;
+                    });
+                }
+                
+                if (this.toolCount) {
+                    this.toolCount.textContent = this.filteredTools.length;
+                }
+                
+                this.renderTools();
+            }
+            
+            renderTools() {
+                if (!this.toolsGrid) return;
+                
+                if (this.filteredTools.length === 0) {
+                    this.toolsGrid.innerHTML = `
+                        <div class="no-tools-found">
+                            <div class="no-tools-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <h3>No Tools Found</h3>
+                            <p>Try adjusting your search terms or check back later.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                this.filteredTools.forEach(tool => {
+                    const icon = tool.icon || 'fas fa-cube';
+                    const typeBadge = tool.type === 'hosted' ? 'Hosted' : 'External';
+                    const typeClass = tool.type === 'hosted' ? 'type-hosted' : 'type-external';
+                    
+                    html += `
+                        <div class="tool-card" data-tool-id="${tool.id}" data-tool-type="${tool.type}">
+                            <div class="tool-card-header">
+                                <div class="tool-icon">
+                                    <i class="${icon}"></i>
+                                </div>
+                                <div class="tool-type-badge ${typeClass}">
+                                    ${typeBadge}
+                                </div>
+                            </div>
+                            
+                            <div class="tool-card-body">
+                                <h3 class="tool-title">${this.escapeHtml(tool.name)}</h3>
+                                <p class="tool-description">${this.escapeHtml(tool.description || 'No description available')}</p>
+                                
+                                ${tool.category ? `
+                                    <div class="tool-category">
+                                        <i class="fas fa-tag"></i> ${this.escapeHtml(tool.category)}
+                                    </div>
+                                ` : ''}
+                                
+                                ${tool.version ? `
+                                    <div class="tool-version">
+                                        <small>v${tool.version}</small>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="tool-card-footer">
+                                <button class="tool-open-btn" onclick="openTool('${tool.id}', '${tool.type}', '${tool.externalUrl || ''}')">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    ${tool.type === 'hosted' ? 'Open Tool' : 'Visit Link'}
+                                </button>
+                                
+                                <button class="tool-info-btn" onclick="showToolInfo('${tool.id}')">
+                                    <i class="fas fa-info-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                this.toolsGrid.innerHTML = html;
+                
+                // Add click tracking
+                this.addClickTracking();
+            }
+            
+            addClickTracking() {
+                const toolCards = document.querySelectorAll('.tool-card');
+                toolCards.forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.tool-open-btn') || e.target.closest('.tool-info-btn')) {
+                            return;
+                        }
+                        
+                        const toolId = card.dataset.toolId;
+                        const toolType = card.dataset.toolType;
+                        openTool(toolId, toolType);
+                    });
+                });
+            }
+            
+            showLoading(show) {
+                if (!this.toolsGrid) return;
+                
+                if (show) {
+                    this.toolsGrid.innerHTML = `
+                        <div class="loading-spinner">
+                            <div class="spinner"></div>
+                            <p>Loading tools from Dark Tech Zone...</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            showNoTools() {
+                if (this.toolsGrid) {
+                    this.toolsGrid.innerHTML = `
+                        <div class="no-tools-found">
+                            <div class="no-tools-icon">
+                                <i class="fas fa-tools"></i>
+                            </div>
+                            <h3>No Tools Available</h3>
+                            <p>Check back soon for new tools or contact the administrator.</p>
+                            <button onclick="location.reload()" class="refresh-btn">
+                                <i class="fas fa-redo"></i> Refresh
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+            
+            showError() {
+                if (this.toolsGrid) {
+                    this.toolsGrid.innerHTML = `
+                        <div class="error-message">
+                            <div class="error-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3>Failed to Load Tools</h3>
+                            <p>Unable to connect to the toolkit database.</p>
+                            <div class="error-actions">
+                                <button onclick="location.reload()" class="retry-btn">
+                                    <i class="fas fa-redo"></i> Retry
+                                </button>
+                                <button onclick="window.location.href='/offline.html'" class="offline-btn">
+                                    <i class="fas fa-wifi-slash"></i> Offline Mode
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            showMaintenanceMode(message) {
+                const maintenanceHtml = `
+                    <div class="maintenance-mode">
+                        <div class="maintenance-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h2>System Maintenance</h2>
+                        <p>${message || 'The toolkit is currently undergoing maintenance. Please check back later.'}</p>
+                        <div class="maintenance-timer">
+                            <i class="fas fa-clock"></i> Started: ${new Date().toLocaleTimeString()}
+                        </div>
+                    </div>
+                `;
+                
+                const container = document.querySelector('.container');
+                if (container) {
+                    container.insertAdjacentHTML('afterbegin', maintenanceHtml);
+                }
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Global functions
+        function openTool(toolId, toolType, externalUrl = '') {
+            localStorage.setItem('last_viewed_tool', toolId);
+            
+            if (toolType === 'hosted') {
+                window.location.href = `/v.html?id=${toolId}`;
+            } else if (externalUrl) {
+                window.open(externalUrl, '_blank');
+                trackToolClick(toolId, 'external');
+            } else {
+                console.error('No URL provided for external tool');
+            }
+        }
+        
+        function showToolInfo(toolId) {
+            alert(`Tool ID: ${toolId}\nDetailed information would appear here.`);
+        }
+        
+        async function trackToolClick(toolId, toolType) {
+            try {
+                const timestamp = Date.now();
+                const dateKey = new Date().toISOString().split('T')[0];
+                
+                // Generate session ID
+                let sessionId = localStorage.getItem('dtz_session_id');
+                if (!sessionId) {
+                    sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('dtz_session_id', sessionId);
+                }
+                
+                // Update Realtime DB
+                const updates = {};
+                updates[`tool_clicks/${toolId}/total`] = firebase.database.ServerValue.increment(1);
+                updates[`tool_clicks/${toolId}/last_click`] = timestamp;
+                updates[`daily_clicks/${dateKey}/${toolId}`] = firebase.database.ServerValue.increment(1);
+                updates[`user_sessions/${sessionId}/last_activity`] = timestamp;
+                updates[`user_sessions/${sessionId}/tools/${toolId}`] = firebase.database.ServerValue.increment(1);
+                
+                await rtdb.ref().update(updates);
+                
+            } catch (error) {
+                console.error('Error tracking tool click:', error);
+            }
+        }
+
+        // Initialize the tools loader when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new ToolsLoader();
+        });
+    </script>
+</body>
+</html>

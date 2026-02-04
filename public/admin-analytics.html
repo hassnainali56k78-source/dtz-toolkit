@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Dark Tech Zone Admin</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-green-dark: #00cc00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000a00;
+            --border-color: #003300;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --accent-red: #ff3333;
+            --accent-blue: #00aaff;
+            --accent-purple: #aa00ff;
+            --shadow-glow: 0 0 10px rgba(0, 255, 0, 0.5);
+            --shadow-intense: 0 0 20px rgba(0, 255, 0, 0.7);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --spacing-xs: 5px;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --font-mono: 'Courier New', monospace;
+            --font-hacker: 'Consolas', 'Monaco', monospace;
+        }
+        
+        /* Base and sidebar styles same as admin-dashboard */
+        
+        /* Analytics Specific */
+        .analytics-container { padding: var(--spacing-xl); }
+        
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xxl);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 20, 0, 0.4), rgba(0, 10, 0, 0.8));
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            transition: all var(--transition-medium);
+        }
+        
+        .stat-card:hover {
+            border-color: var(--neon-green);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .stat-title {
+            font-size: 1rem;
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            margin: 0;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+            line-height: 1;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+        
+        .change-up { color: var(--neon-green); }
+        .change-down { color: var(--accent-red); }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .chart-card {
+            background: rgba(0, 10, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+        }
+        
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+        
+        .chart-placeholder {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-muted);
+        }
+        
+        .tool-list {
+            margin-top: var(--spacing-xl);
+        }
+        
+        .tool-list-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .tool-list-table th {
+            background: rgba(0, 30, 0, 0.5);
+            color: var(--neon-green);
+            font-family: var(--font-mono);
+            font-weight: normal;
+            text-align: left;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tool-list-table td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid rgba(0, 51, 0, 0.5);
+            color: var(--text-secondary);
+        }
+        
+        .tool-list-table tr:hover {
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .click-count {
+            font-family: var(--font-mono);
+            font-weight: bold;
+            color: var(--neon-green);
+        }
+        
+        .click-bar {
+            height: 8px;
+            background: rgba(0, 51, 0, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .click-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-green-dark), var(--neon-green));
+            border-radius: 4px;
+        }
+        
+        .export-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .export-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            background: rgba(0, 20, 0, 0.5);
+            color: var(--neon-green);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-hacker);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all var(--transition-medium);
+        }
+        
+        .export-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar (same as admin-dashboard) -->
+        <div class="admin-sidebar">
+            <!-- Copy sidebar from admin-dashboard.html -->
+        </div>
+        
+        <!-- Main Content -->
+        <div class="admin-main">
+            <div class="admin-header">
+                <div class="header-title">
+                    <h1><i class="fas fa-chart-bar"></i> Analytics Dashboard</h1>
+                    <p class="header-subtitle">Track tool usage and user engagement</p>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <div class="analytics-container">
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Total Users</h3>
+                                <i class="fas fa-users" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="total-users">0</div>
+                            <div class="stat-change">
+                                <span class="change-up" id="user-change">+0%</span>
+                                <small style="color: var(--text-muted);">vs previous period</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Tool Clicks</h3>
+                                <i class="fas fa-mouse-pointer" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="total-clicks">0</div>
+                            <div class="stat-change">
+                                <span class="change-up" id="click-change">+0%</span>
+                                <small style="color: var(--text-muted);">vs previous period</small>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <h3 class="stat-title">Active Sessions</h3>
+                                <i class="fas fa-signal" style="color: var(--neon-green);"></i>
+                            </div>
+                            <div class="stat-value" id="active-sessions">0</div>
+                            <div class="stat-change">
+                                <span class="change-up" id="session-change">+0%</span>
+                                <small style="color: var(--text-muted);">current active</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="charts-container">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-line"></i> Daily Clicks
+                                </h3>
+                            </div>
+                            <div class="chart-container" id="daily-clicks-chart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>Loading daily clicks chart...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">
+                                    <i class="fas fa-chart-pie"></i> Tool Categories
+                                </h3>
+                            </div>
+                            <div class="chart-container" id="categories-chart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Loading categories chart...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Top Tools -->
+                    <div class="tool-list">
+                        <div class="tool-list-header">
+                            <h3 style="margin: 0;">
+                                <i class="fas fa-fire"></i> Top Performing Tools
+                            </h3>
+                            <select id="top-tools-period" class="form-select" style="width: auto;">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30" selected>Last 30 Days</option>
+                                <option value="90">Last 90 Days</option>
+                            </select>
+                        </div>
+                        
+                        <div id="top-tools-container">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                <p>Loading top tools...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Export Actions -->
+                    <div class="export-actions">
+                        <button class="export-btn" id="export-csv">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </button>
+                        <button class="export-btn" id="export-json">
+                            <i class="fas fa-file-code"></i> Export JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Font Awesome -->
+    <script>
+        const faLink = document.createElement('link');
+        faLink.rel = 'stylesheet';
+        faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(faLink);
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD369ImYdPQcgnystU9KQqs5Rhji07MLOw",
+            authDomain: "dtz-toolkit.firebaseapp.com",
+            databaseURL: "https://dtz-toolkit-default-rtdb.firebaseio.com",
+            projectId: "dtz-toolkit",
+            storageBucket: "dtz-toolkit.firebasestorage.app",
+            messagingSenderId: "260322206338",
+            appId: "1:260322206338:web:79049e8cc7a9fe54824a9b"
+        };
+
+        // Initialize Firebase
+        let app, auth, db, rtdb;
+        
+        function initializeFirebase() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    console.error('Firebase not loaded');
+                    return false;
+                }
+                
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                rtdb = firebase.database();
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                return false;
+            }
+        }
+
+        // Analytics Manager Class
+        class AnalyticsManager {
+            constructor() {
+                this.charts = {};
+                this.data = {};
+                
+                this.checkAuth();
+            }
+            
+            async checkAuth() {
+                if (!initializeFirebase()) {
+                    this.showError('Failed to initialize Firebase');
+                    return;
+                }
+                
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        const isAdmin = await this.checkAdminAccess(user.uid);
+                        if (isAdmin) {
+                            this.init();
+                            this.updateUserInfo(user);
+                        } else {
+                            window.location.href = '/admin.html';
+                        }
+                    } else {
+                        window.location.href = '/admin.html';
+                    }
+                });
+            }
+            
+            async checkAdminAccess(uid) {
+                try {
+                    const adminDoc = await db.collection('admins').doc(uid).get();
+                    return adminDoc.exists && ['admin', 'superadmin'].includes(adminDoc.data().role);
+                } catch (error) {
+                    console.error('Error checking admin access:', error);
+                    return false;
+                }
+            }
+            
+            updateUserInfo(user) {
+                const adminNameEl = document.getElementById('admin-name');
+                const adminEmailEl = document.getElementById('admin-email');
+                
+                if (adminNameEl) {
+                    adminNameEl.textContent = user.displayName || 'Admin User';
+                }
+                
+                if (adminEmailEl) {
+                    adminEmailEl.textContent = user.email;
+                }
+            }
+            
+            async init() {
+                await this.loadAnalytics();
+                this.setupEventListeners();
+                this.setupLogoutHandler();
+            }
+            
+            async loadAnalytics() {
+                try {
+                    await Promise.all([
+                        this.loadStats(),
+                        this.loadDailyClicks(),
+                        this.loadToolCategories(),
+                        this.loadTopTools()
+                    ]);
+                } catch (error) {
+                    console.error('Error loading analytics:', error);
+                    this.showError('Failed to load analytics data');
+                }
+            }
+            
+            async loadStats() {
+                try {
+                    const dateKey = new Date().toISOString().split('T')[0];
+                    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+                    const yesterdayKey = yesterday.toISOString().split('T')[0];
+                    
+                    // Get today's data
+                    const todaySnapshot = await rtdb.ref('daily_clicks').child(dateKey).once('value');
+                    let todayClicks = 0;
+                    todaySnapshot.forEach(toolSnapshot => {
+                        todayClicks += toolSnapshot.val();
+                    });
+                    
+                    // Get yesterday's data
+                    const yesterdaySnapshot = await rtdb.ref('daily_clicks').child(yesterdayKey).once('value');
+                    let yesterdayClicks = 0;
+                    yesterdaySnapshot.forEach(toolSnapshot => {
+                        yesterdayClicks += toolSnapshot.val();
+                    });
+                    
+                    // Update UI
+                    document.getElementById('total-clicks').textContent = todayClicks.toLocaleString();
+                    
+                    // Calculate percentage change
+                    let clickChange = '0%';
+                    if (yesterdayClicks > 0) {
+                        const change = ((todayClicks - yesterdayClicks) / yesterdayClicks) * 100;
+                        clickChange = (change >= 0 ? '+' : '') + change.toFixed(1) + '%';
+                    }
+                    document.getElementById('click-change').textContent = clickChange;
+                    document.getElementById('click-change').className = clickChange.startsWith('+') ? 'change-up' : 'change-down';
+                    
+                } catch (error) {
+                    console.error('Error loading stats:', error);
+                }
+            }
+            
+            async loadDailyClicks() {
+                try {
+                    // Get last 7 days of data
+                    const dates = [];
+                    const clicks = [];
+                    
+                    for (let i = 6; i >= 0; i--) {
+                        const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+                        const dateKey = date.toISOString().split('T')[0];
+                        const dateLabel = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        
+                        dates.push(dateLabel);
+                        
+                        const snapshot = await rtdb.ref('daily_clicks').child(dateKey).once('value');
+                        let dayClicks = 0;
+                        snapshot.forEach(toolSnapshot => {
+                            dayClicks += toolSnapshot.val();
+                        });
+                        
+                        clicks.push(dayClicks);
+                    }
+                    
+                    this.renderDailyClicksChart(dates, clicks);
+                    
+                } catch (error) {
+                    console.error('Error loading daily clicks:', error);
+                }
+            }
+            
+            renderDailyClicksChart(dates, clicks) {
+                const container = document.getElementById('daily-clicks-chart');
+                const canvas = document.createElement('canvas');
+                container.innerHTML = '';
+                container.appendChild(canvas);
+                
+                // Destroy existing chart if it exists
+                if (this.charts.dailyClicks) {
+                    this.charts.dailyClicks.destroy();
+                }
+                
+                this.charts.dailyClicks = new Chart(canvas, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Daily Clicks',
+                            data: clicks,
+                            borderColor: '#00ff00',
+                            backgroundColor: 'rgba(0, 255, 0, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#ccc',
+                                    font: {
+                                        family: 'Courier New'
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    color: 'rgba(0, 51, 0, 0.3)'
+                                },
+                                ticks: {
+                                    color: '#888'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(0, 51, 0, 0.3)'
+                                },
+                                ticks: {
+                                    color: '#888'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            async loadToolCategories() {
+                try {
+                    const toolsSnapshot = await db.collection('tools').get();
+                    const categories = {};
+                    
+                    toolsSnapshot.forEach(doc => {
+                        const tool = doc.data();
+                        const category = tool.category || 'Uncategorized';
+                        categories[category] = (categories[category] || 0) + 1;
+                    });
+                    
+                    this.renderCategoriesChart(categories);
+                    
+                } catch (error) {
+                    console.error('Error loading tool categories:', error);
+                }
+            }
+            
+            renderCategoriesChart(categories) {
+                const container = document.getElementById('categories-chart');
+                const canvas = document.createElement('canvas');
+                container.innerHTML = '';
+                container.appendChild(canvas);
+                
+                // Destroy existing chart if it exists
+                if (this.charts.categories) {
+                    this.charts.categories.destroy();
+                }
+                
+                const colors = [
+                    '#00ff00', '#00aaff', '#aa00ff', '#ffff00', '#ff3333',
+                    '#00cc00', '#0088cc', '#8800cc', '#cccc00', '#cc0000'
+                ];
+                
+                this.charts.categories = new Chart(canvas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(categories),
+                        datasets: [{
+                            data: Object.values(categories),
+                            backgroundColor: colors,
+                            borderColor: colors.map(color => color + 'cc'),
+                            borderWidth: 2,
+                            hoverOffset: 10
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: '#ccc',
+                                    font: {
+                                        family: 'Courier New',
+                                        size: 12
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            async loadTopTools(period = '30') {
+                try {
+                    const days = parseInt(period);
+                    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+                    const startDateStr = startDate.toISOString().split('T')[0];
+                    const endDate = new Date();
+                    const endDateStr = endDate.toISOString().split('T')[0];
+                    
+                    // Get click data
+                    const clicksSnapshot = await rtdb.ref('daily_clicks')
+                        .orderByKey()
+                        .startAt(startDateStr)
+                        .endAt(endDateStr)
+                        .once('value');
+                    
+                    // Aggregate clicks by tool
+                    const toolClicks = {};
+                    
+                    clicksSnapshot.forEach(dateSnapshot => {
+                        const dayClicks = dateSnapshot.val();
+                        Object.entries(dayClicks || {}).forEach(([toolId, count]) => {
+                            toolClicks[toolId] = (toolClicks[toolId] || 0) + count;
+                        });
+                    });
+                    
+                    // Get tool details
+                    const toolsSnapshot = await db.collection('tools').get();
+                    const toolsData = [];
+                    
+                    toolsSnapshot.forEach(doc => {
+                        const tool = doc.data();
+                        tool.id = doc.id;
+                        tool.clicks = toolClicks[doc.id] || 0;
+                        toolsData.push(tool);
+                    });
+                    
+                    // Sort by clicks
+                    toolsData.sort((a, b) => b.clicks - a.clicks);
+                    
+                    // Take top 10
+                    const topTools = toolsData.slice(0, 10);
+                    
+                    this.renderTopTools(topTools);
+                    
+                } catch (error) {
+                    console.error('Error loading top tools:', error);
+                }
+            }
+            
+            renderTopTools(tools) {
+                const container = document.getElementById('top-tools-container');
+                
+                if (tools.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <i class="fas fa-chart-bar" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <p>No tool usage data available</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Find max clicks for percentage calculation
+                const maxClicks = Math.max(...tools.map(t => t.clicks));
+                
+                let html = `
+                    <table class="tool-list-table">
+                        <thead>
+                            <tr>
+                                <th>Tool</th>
+                                <th>Category</th>
+                                <th>Clicks</th>
+                                <th>Popularity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                tools.forEach(tool => {
+                    const percentage = maxClicks > 0 ? (tool.clicks / maxClicks) * 100 : 0;
+                    
+                    html += `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <div style="width: 24px; height: 24px; background: rgba(0, 255, 0, 0.1); border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="${tool.icon || 'fas fa-cube'}" style="font-size: 0.9rem; color: var(--neon-green);"></i>
+                                    </div>
+                                    <div>
+                                        <strong>${this.escapeHtml(tool.name)}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${tool.category || 'Uncategorized'}</td>
+                            <td class="click-count">${tool.clicks.toLocaleString()}</td>
+                            <td>
+                                <div class="click-bar">
+                                    <div class="click-fill" style="width: ${percentage}%"></div>
+                                </div>
+                                <small style="color: var(--text-muted);">${percentage.toFixed(1)}%</small>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                        </tbody>
+                    </table>
+                `;
+                
+                container.innerHTML = html;
+            }
+            
+            setupEventListeners() {
+                // Top tools period selector
+                document.getElementById('top-tools-period').addEventListener('change', (e) => {
+                    this.loadTopTools(e.target.value);
+                });
+                
+                // Export buttons
+                document.getElementById('export-csv').addEventListener('click', () => this.exportData('csv'));
+                document.getElementById('export-json').addEventListener('click', () => this.exportData('json'));
+                
+                // Refresh button
+                const refreshBtn = document.querySelector('.refresh-btn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => this.loadAnalytics());
+                }
+            }
+            
+            setupLogoutHandler() {
+                document.getElementById('admin-logout').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await auth.signOut();
+                        localStorage.removeItem('admin_session');
+                        window.location.href = '/admin.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        alert('Logout failed. Please try again.');
+                    }
+                });
+            }
+            
+            async exportData(format) {
+                try {
+                    const exportData = {
+                        exportedAt: new Date().toISOString(),
+                        analytics: this.data
+                    };
+                    
+                    let content, mimeType, fileName;
+                    
+                    if (format === 'csv') {
+                        content = this.convertToCSV(exportData);
+                        mimeType = 'text/csv';
+                        fileName = `analytics_${new Date().toISOString().split('T')[0]}.csv`;
+                    } else {
+                        content = JSON.stringify(exportData, null, 2);
+                        mimeType = 'application/json';
+                        fileName = `analytics_${new Date().toISOString().split('T')[0]}.json`;
+                    }
+                    
+                    // Create download link
+                    const blob = new Blob([content], { type: mimeType });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    this.showSuccess(`Analytics exported as ${format.toUpperCase()}`);
+                    
+                } catch (error) {
+                    console.error('Error exporting data:', error);
+                    this.showError('Failed to export data');
+                }
+            }
+            
+            convertToCSV(data) {
+                let csv = 'Metric,Value\n';
+                
+                // Add basic stats
+                csv += `Total Clicks,${document.getElementById('total-clicks').textContent}\n`;
+                csv += `Active Sessions,${document.getElementById('active-sessions').textContent}\n`;
+                csv += `Total Users,${document.getElementById('total-users').textContent}\n\n`;
+                
+                return csv;
+            }
+            
+            showSuccess(message) {
+                this.showAlert(message, 'success');
+            }
+            
+            showError(message) {
+                this.showAlert(message, 'error');
+            }
+            
+            showAlert(message, type) {
+                const alert = document.createElement('div');
+                alert.className = `admin-alert alert-${type}`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                alert.style.cssText = `
+                    padding: var(--spacing-md);
+                    border-radius: var(--border-radius-md);
+                    margin-bottom: var(--spacing-md);
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-sm);
+                    animation: slideIn 0.3s ease;
+                    background: ${type === 'success' ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 51, 51, 0.1)'};
+                    border: 1px solid ${type === 'success' ? 'var(--neon-green)' : 'var(--accent-red)'};
+                    color: ${type === 'success' ? 'var(--neon-green)' : 'var(--accent-red)'};
+                `;
+                
+                const container = document.querySelector('.analytics-container');
+                if (container) {
+                    container.insertBefore(alert, container.firstChild);
+                }
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+        
+        // Initialize analytics manager
+        document.addEventListener('DOMContentLoaded', () => {
+            window.analyticsManager = new AnalyticsManager();
+        });
+    </script>
+</body>
+</html>

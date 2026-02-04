@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Dark Tech Zone</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-green-dark: #00cc00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000a00;
+            --border-color: #003300;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-red: #ff3333;
+            --accent-blue: #00aaff;
+            --accent-google: #4285F4;
+            --transition-fast: 0.2s ease;
+            --border-radius-md: 8px;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Segoe UI', sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 255, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 0, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .login-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+            padding: var(--spacing-md);
+        }
+        
+        .back-to-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+        }
+        
+        .back-btn {
+            background: rgba(0, 20, 0, 0.5);
+            color: var(--neon-green);
+            border: 1px solid var(--border-color);
+            padding: 8px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-color: var(--neon-green);
+        }
+        
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(0, 15, 0, 0.9);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-xl);
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .login-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .login-logo-shield {
+            width: 50px;
+            height: 60px;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.5));
+        }
+        
+        .login-title {
+            color: var(--neon-green);
+            font-size: 28px;
+            margin-bottom: var(--spacing-sm);
+            font-family: var(--font-mono);
+            font-weight: bold;
+        }
+        
+        .login-subtitle {
+            color: var(--neon-green-dark);
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .login-methods {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+        
+        .auth-method h3 {
+            color: var(--neon-green);
+            margin-bottom: var(--spacing-md);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .auth-btn {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-mono);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            font-size: 16px;
+        }
+        
+        .google-btn {
+            background: var(--accent-google);
+            color: white;
+            border: 1px solid #3367D6;
+        }
+        
+        .google-btn:hover {
+            background: #3367D6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 133, 244, 0.4);
+        }
+        
+        .email-btn {
+            background: linear-gradient(45deg, var(--neon-green-dark), var(--neon-green));
+            color: black;
+            border: 1px solid var(--neon-green);
+        }
+        
+        .email-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+        }
+        
+        .email-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .login-divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+        
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+        }
+        
+        .login-divider span {
+            background: rgba(0, 15, 0, 0.9);
+            padding: 0 15px;
+            color: var(--neon-green-dark);
+            font-size: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid var(--accent-red);
+            border-radius: 4px;
+            padding: 12px 15px;
+            margin-bottom: var(--spacing-lg);
+            color: #ff6666;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .login-error.show {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-label {
+            display: block;
+            color: var(--neon-green);
+            margin-bottom: var(--spacing-sm);
+            font-family: var(--font-mono);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(0, 10, 0, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--neon-green);
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .login-footer {
+            margin-top: var(--spacing-xl);
+            text-align: center;
+            color: var(--neon-green-dark);
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .login-security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: var(--spacing-sm);
+        }
+        
+        .login-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 15, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .login-loading.show {
+            display: flex;
+        }
+        
+        .login-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--neon-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-box {
+                padding: var(--spacing-lg);
+            }
+            
+            .login-logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .login-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="back-to-home">
+            <a href="/" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Toolkit
+            </a>
+        </div>
+        
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-logo">
+                    <div class="login-logo-shield">
+                        <svg width="50" height="60" viewBox="0 0 50 60" fill="none">
+                            <path d="M25 0L50 15V45L25 60L0 45V15L25 0Z" fill="#00ff00" fill-opacity="0.2"/>
+                            <path d="M25 5L45 17.5V42.5L25 55L5 42.5V17.5L25 5Z" fill="none" stroke="#00ff00" stroke-width="2"/>
+                            <path d="M25 20L35 25V35L25 40L15 35V25L25 20Z" fill="#00ff00" fill-opacity="0.4"/>
+                            <circle cx="25" cy="30" r="5" fill="#00ff00"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="login-title">DARK TECH ZONE</h1>
+                        <p class="login-subtitle">Admin Authentication Portal</p>
+                    </div>
+                </div>
+                <p style="color: var(--neon-green-dark); font-size: 14px;">
+                    <i class="fas fa-shield-alt"></i> Secure access required
+                </p>
+            </div>
+            
+            <div class="login-error" id="login-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="error-message">Authentication failed</span>
+            </div>
+            
+            <div class="login-methods">
+                <!-- Google Sign-In -->
+                <div class="auth-method">
+                    <h3>
+                        <i class="fab fa-google"></i> Primary Authentication
+                    </h3>
+                    <button id="google-login" class="auth-btn google-btn">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+                
+                <div class="login-divider">
+                    <span>or use email/password</span>
+                </div>
+                
+                <!-- Email/Password Form -->
+                <form id="email-login-form">
+                    <div class="form-group">
+                        <label class="form-label">Admin Email</label>
+                        <input type="email" id="admin-email" class="form-input" 
+                               placeholder="admin@darktech.zone" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="password-container">
+                            <input type="password" id="admin-password" class="form-input" 
+                                   placeholder="••••••••" required>
+                            <button type="button" id="toggle-password" class="password-toggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="auth-btn email-btn" id="email-login-btn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                </form>
+            </div>
+            
+            <div class="login-footer">
+                <div class="login-security">
+                    <i class="fas fa-lock"></i>
+                    <span>All access is logged and monitored</span>
+                </div>
+                <p style="margin-top: var(--spacing-md);">
+                    UID must exist in /admins collection for access
+                </p>
+            </div>
+        </div>
+        
+        <div class="login-loading" id="login-loading">
+            <div class="login-spinner"></div>
+            <p style="color: var(--neon-green); margin-top: var(--spacing-md);">Verifying admin credentials...</p>
+            <p style="color: var(--neon-green-dark); font-size: 12px; margin-top: var(--spacing-sm);">
+                Checking /admins collection for UID...
+            </p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Font Awesome -->
+    <script>
+        const faLink = document.createElement('link');
+        faLink.rel = 'stylesheet';
+        faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(faLink);
+    </script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD369ImYdPQcgnystU9KQqs5Rhji07MLOw",
+            authDomain: "dtz-toolkit.firebaseapp.com",
+            projectId: "dtz-toolkit",
+            storageBucket: "dtz-toolkit.firebasestorage.app",
+            messagingSenderId: "260322206338",
+            appId: "1:260322206338:web:79049e8cc7a9fe54824a9b"
+        };
+        
+        // Initialize Firebase
+        let app, auth, db;
+        
+        function initializeFirebase() {
+            try {
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log('Firebase initialized for admin login');
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                return false;
+            }
+        }
+        
+        // Google Authentication Class
+        class GoogleAuth {
+            constructor() {
+                this.googleProvider = null;
+                this.isInitialized = false;
+                
+                this.init();
+            }
+            
+            init() {
+                if (!initializeFirebase()) {
+                    this.showError('Failed to initialize Firebase');
+                    return;
+                }
+                
+                // Initialize Google provider
+                this.setupGoogleProvider();
+                
+                // Setup Google Sign-In button
+                this.setupGoogleButton();
+                
+                // Check for stored login message
+                this.showStoredMessage();
+                
+                // Check if already logged in
+                this.checkExistingSession();
+                
+                this.isInitialized = true;
+            }
+            
+            setupGoogleProvider() {
+                this.googleProvider = new firebase.auth.GoogleAuthProvider();
+                this.googleProvider.addScope('email');
+                this.googleProvider.addScope('profile');
+                this.googleProvider.setCustomParameters({
+                    prompt: 'select_account'
+                });
+            }
+            
+            setupGoogleButton() {
+                const googleBtn = document.getElementById('google-login');
+                if (!googleBtn) return;
+                
+                googleBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.signInWithGoogle();
+                });
+            }
+            
+            async signInWithGoogle() {
+                try {
+                    this.showLoading(true);
+                    this.hideError();
+                    
+                    const result = await auth.signInWithPopup(this.googleProvider);
+                    const user = result.user;
+                    
+                    console.log('Google sign-in successful:', user.email);
+                    
+                    // Check if user is admin
+                    const isAdmin = await this.checkAdminAccess(user.uid);
+                    
+                    if (isAdmin) {
+                        this.redirectToDashboard();
+                    } else {
+                        await auth.signOut();
+                        this.showError('Access denied. Your account is not authorized as admin.');
+                    }
+                    
+                } catch (error) {
+                    console.error('Google sign-in error:', error);
+                    this.handleAuthError(error);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+            
+            async checkAdminAccess(uid) {
+                try {
+                    const adminDoc = await db.collection('admins').doc(uid).get();
+                    
+                    if (!adminDoc.exists) {
+                        console.log('User not found in admins collection');
+                        return false;
+                    }
+                    
+                    const adminData = adminDoc.data();
+                    
+                    if (!['admin', 'superadmin'].includes(adminData.role)) {
+                        return false;
+                    }
+                    
+                    if (adminData.status !== 'active') {
+                        return false;
+                    }
+                    
+                    // Update last login
+                    await this.updateAdminLogin(uid, adminData);
+                    
+                    // Log successful admin login
+                    await this.logAdminLogin(uid, adminData);
+                    
+                    return true;
+                    
+                } catch (error) {
+                    console.error('Error checking admin access:', error);
+                    return false;
+                }
+            }
+            
+            async updateAdminLogin(uid, adminData) {
+                try {
+                    const updateData = {
+                        lastLogin: new Date(),
+                        loginCount: firebase.firestore.FieldValue.increment(1)
+                    };
+                    
+                    await db.collection('admins').doc(uid).update(updateData);
+                    
+                } catch (error) {
+                    console.error('Error updating admin login:', error);
+                }
+            }
+            
+            async logAdminLogin(uid, adminData) {
+                try {
+                    const logData = {
+                        uid: uid,
+                        email: adminData.email,
+                        action: 'login_success',
+                        description: 'Admin logged in via Google',
+                        timestamp: new Date(),
+                        userAgent: navigator.userAgent,
+                        provider: 'google'
+                    };
+                    
+                    await db.collection('admin_logs').add(logData);
+                    
+                } catch (error) {
+                    console.error('Error logging admin login:', error);
+                }
+            }
+            
+            redirectToDashboard() {
+                const redirectUrl = sessionStorage.getItem('admin_redirect') || '/admin/admin-dashboard.html';
+                sessionStorage.removeItem('admin_redirect');
+                window.location.href = redirectUrl;
+            }
+            
+            handleAuthError(error) {
+                let errorMessage = 'Authentication failed';
+                
+                switch (error.code) {
+                    case 'auth/popup-blocked':
+                        errorMessage = 'Popup blocked by browser. Please allow popups for this site.';
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        errorMessage = 'Sign-in popup was closed before completion.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMessage = 'Network error. Please check your connection.';
+                        break;
+                    default:
+                        errorMessage = error.message || 'Authentication error';
+                }
+                
+                this.showError(errorMessage);
+            }
+            
+            checkExistingSession() {
+                const adminSession = localStorage.getItem('admin_session');
+                if (adminSession) {
+                    try {
+                        const session = JSON.parse(adminSession);
+                        if (session.expires > Date.now()) {
+                            this.redirectToDashboard();
+                        }
+                    } catch (e) {
+                        localStorage.removeItem('admin_session');
+                    }
+                }
+            }
+            
+            showError(message) {
+                const errorEl = document.getElementById('login-error');
+                const errorMessageEl = document.getElementById('error-message');
+                
+                if (errorEl && errorMessageEl) {
+                    errorMessageEl.textContent = message;
+                    errorEl.classList.add('show');
+                    
+                    setTimeout(() => {
+                        errorEl.classList.remove('show');
+                    }, 10000);
+                }
+            }
+            
+            hideError() {
+                const errorEl = document.getElementById('login-error');
+                if (errorEl) {
+                    errorEl.classList.remove('show');
+                }
+            }
+            
+            showLoading(show) {
+                const loadingEl = document.getElementById('login-loading');
+                if (loadingEl) {
+                    loadingEl.classList.toggle('show', show);
+                }
+                
+                const buttons = document.querySelectorAll('button, input[type="submit"]');
+                buttons.forEach(btn => {
+                    btn.disabled = show;
+                });
+            }
+            
+            showStoredMessage() {
+                const message = sessionStorage.getItem('login_message');
+                if (message) {
+                    this.showError(message);
+                    sessionStorage.removeItem('login_message');
+                }
+            }
+        }
+        
+        // UI Event Handlers
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const passwordInput = document.getElementById('admin-password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.className = 'fas fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                icon.className = 'fas fa-eye';
+            }
+        });
+        
+        // Handle email/password form submission
+        document.getElementById('email-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            
+            // For demo purposes - in production, use Firebase Auth
+            alert('Email/password login must be configured in Firebase. Use Google Sign-In for now.');
+        });
+        
+        // Initialize Google auth when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            const googleAuth = new GoogleAuth();
+            window.googleAuth = googleAuth;
+        });
+    </script>
+</body>
+</html>

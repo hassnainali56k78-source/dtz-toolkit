@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Dark Tech Zone Admin</title>
+    <style>
+        :root {
+            --neon-green: #00ff00;
+            --neon-green-dark: #00cc00;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #000a00;
+            --border-color: #003300;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --accent-red: #ff3333;
+            --accent-blue: #00aaff;
+            --accent-purple: #aa00ff;
+            --shadow-glow: 0 0 10px rgba(0, 255, 0, 0.5);
+            --shadow-intense: 0 0 20px rgba(0, 255, 0, 0.7);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s ease;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --spacing-xs: 5px;
+            --spacing-sm: 10px;
+            --spacing-md: 15px;
+            --spacing-lg: 20px;
+            --spacing-xl: 30px;
+            --font-mono: 'Courier New', monospace;
+            --font-hacker: 'Consolas', 'Monaco', monospace;
+        }
+        
+        /* Base and sidebar styles same as admin-dashboard */
+        
+        /* Settings Specific */
+        .settings-container {
+            padding: var(--spacing-xl);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        .settings-tab {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition-fast);
+            white-space: nowrap;
+        }
+        
+        .settings-tab:hover {
+            color: var(--neon-green);
+            background: rgba(0, 255, 0, 0.05);
+        }
+        
+        .settings-tab.active {
+            color: var(--neon-green);
+        }
+        
+        .settings-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--neon-green);
+        }
+        
+        .settings-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .settings-content.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .settings-section {
+            background: rgba(0, 10, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: var(--border-radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--neon-green);
+            flex-shrink: 0;
+        }
+        
+        .section-title {
+            margin: 0;
+            color: var(--neon-green);
+            font-size: 1.3rem;
+        }
+        
+        .form-group { margin-bottom: var(--spacing-lg); }
+        .form-group-full { grid-column: 1 / -1; }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            transition: .4s;
+            border-radius: 30px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: var(--text-primary);
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .toggle-slider {
+            background-color: var(--neon-green);
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+        
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
+        }
+        
+        .danger-zone {
+            border-color: var(--accent-red);
+            background: rgba(255, 51, 51, 0.05);
+        }
+        
+        .danger-zone .section-icon {
+            background: rgba(255, 51, 51, 0.1);
+            color: var(--accent-red);
+        }
+        
+        .danger-zone .section-title {
+            color: var(--accent-red);
+        }
+        
+        .danger-action {
+            background: linear-gradient(45deg, #cc0000, #ff3333);
+            color: white;
+            border: none;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-hacker);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: all var(--transition-medium);
+        }
+        
+        .settings-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            padding-top: var(--spacing-xl);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .save-btn, .reset-btn {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-hacker);
+            font-weight: bold;
+            cursor: pointer;
+            min-width: 120px;
+            transition: all var(--transition-medium);
+        }
+        
+        .save-btn {
+            background: linear-gradient(45deg, var(--neon-green-dark), var(--neon-green));
+            color: black;
+        }
+        
+        .save-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-intense);
+        }
+        
+        .save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .reset-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .reset-btn:hover {
+            background: rgba(0, 255, 0, 0.1);
+            color: var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar (same as admin-dashboard) -->
+        <div class="admin-sidebar">
+            <!-- Copy sidebar from admin-dashboard.html -->
+        </div>
+        
+        <!-- Main Content -->
+        <div class="admin-main">
+            <div class="admin-header">
+                <div class="header-title">
+                    <h1><i class="fas fa-cog"></i> System Settings</h1>
+                    <p class="header-subtitle">Configure Dark Tech Zone Toolkit</p>
+                </div>
+            </div>
+            
+            <div class="admin-content">
+                <div class="settings-container">
+                    <div class="settings-header">
+                        <h2 style="margin: 0;">Configuration Panel</h2>
+                    </div>
+                    
+                    <!-- Settings Tabs -->
+                    <div class="settings-tabs">
+                        <button class="settings-tab active" data-tab="general">General</button>
+                        <button class="settings-tab" data-tab="appearance">Appearance</button>
+                        <button class="settings-tab" data-tab="content">Content</button>
+                        <button class="settings-tab" data-tab="admins">Admins</button>
+                        <button class="settings-tab" data-tab="danger">Danger Zone</button>
+                    </div>
+                    
+                    <!-- General Settings -->
+                    <div class="settings-content active" id="general-tab">
+                        <form id="general-settings-form">
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-toolbox"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="section-title">Toolkit Configuration</h3>
+                                        <p class="section-description">Basic settings for your toolkit</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="toolkit-name">Toolkit Name</label>
+                                    <input type="text" id="toolkit-name" class="form-input" maxlength="50">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="toggle-label">
+                                        <span class="toggle-text">Maintenance Mode</span>
+                                        <div class="toggle-switch">
+                                            <input type="checkbox" id="maintenance-mode">
+                                            <span class="toggle-slider"></span>
+                                        </div>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="whatsapp-channel">WhatsApp Channel URL</label>
+                                    <input type="url" id="whatsapp-channel" class="form-input" placeholder="https://whatsapp.com/channel/...">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Content Settings -->
+                    <div class="settings-content" id="content-tab">
+                        <form id="content-settings-form">
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <div class="section-icon">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="section-title">Messages & Content</h3>
+                                        <p class="section-description">Customize text content shown to users</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="welcome-message">Welcome Message</label>
+                                    <textarea id="welcome-message" class="form-textarea" rows="4" placeholder="Welcome to Dark Tech Zone Toolkit..."></textarea>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label" for="broadcast-message">Broadcast Message</label>
+                                    <textarea id="broadcast-message" class="form-textarea" rows="3" placeholder="Important announcement..."></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Danger Zone -->
+                    <div class="settings-content" id="danger-tab">
+                        <div class="settings-section danger-zone">
+                            <div class="section-header">
+                                <div class="section-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <div>
+                                    <h3 class="section-title">Danger Zone</h3>
+                                    <p class="section-description">Irreversible actions - proceed with caution</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <h4 style="color: var(--accent-red); margin-bottom: var(--spacing-md);">
+                                    <i class="fas fa-trash-alt"></i> Reset All Tools
+                                </h4>
+                                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+                                    This will delete all tools and their hosted HTML content.
+                                </p>
+                                <button class="danger-action" onclick="settingsManager.resetAllTools()">
+                                    <i class="fas fa-bomb"></i> Reset All Tools
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Settings Actions -->
+                    <div class="settings-actions">
+                        <button type="button" class="reset-btn" id="reset-settings">
+                            <i class="fas fa-undo"></i> Reset to Defaults
+                        </button>
+                        <button type="submit" class="save-btn" id="save-settings">
+                            <i class="fas fa-save"></i> Save All Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome -->
+    <script>
+        const faLink = document.createElement('link');
+        faLink.rel = 'stylesheet';
+        faLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css';
+        document.head.appendChild(faLink);
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD369ImYdPQcgnystU9KQqs5Rhji07MLOw",
+            authDomain: "dtz-toolkit.firebaseapp.com",
+            projectId: "dtz-toolkit",
+            storageBucket: "dtz-toolkit.firebasestorage.app",
+            messagingSenderId: "260322206338",
+            appId: "1:260322206338:web:79049e8cc7a9fe54824a9b"
+        };
+
+        // Initialize Firebase
+        let app, auth, db;
+        
+        function initializeFirebase() {
+            try {
+                if (typeof firebase === 'undefined') {
+                    console.error('Firebase not loaded');
+                    return false;
+                }
+                
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+                
+                return true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                return false;
+            }
+        }
+
+        // Settings Manager Class
+        class SettingsManager {
+            constructor() {
+                this.settings = {};
+                this.isLoading = false;
+                
+                this.checkAuth();
+            }
+            
+            async checkAuth() {
+                if (!initializeFirebase()) {
+                    this.showError('Failed to initialize Firebase');
+                    return;
+                }
+                
+                auth.onAuthStateChanged(async (user) => {
+                    if (user) {
+                        const isAdmin = await this.checkAdminAccess(user.uid);
+                        if (isAdmin) {
+                            this.init();
+                            this.updateUserInfo(user);
+                        } else {
+                            window.location.href = '/admin.html';
+                        }
+                    } else {
+                        window.location.href = '/admin.html';
+                    }
+                });
+            }
+            
+            async checkAdminAccess(uid) {
+                try {
+                    const adminDoc = await db.collection('admins').doc(uid).get();
+                    return adminDoc.exists && ['admin', 'superadmin'].includes(adminDoc.data().role);
+                } catch (error) {
+                    console.error('Error checking admin access:', error);
+                    return false;
+                }
+            }
+            
+            updateUserInfo(user) {
+                const adminNameEl = document.getElementById('admin-name');
+                const adminEmailEl = document.getElementById('admin-email');
+                
+                if (adminNameEl) {
+                    adminNameEl.textContent = user.displayName || 'Admin User';
+                }
+                
+                if (adminEmailEl) {
+                    adminEmailEl.textContent = user.email;
+                }
+            }
+            
+            async init() {
+                await this.loadSettings();
+                this.setupEventListeners();
+                this.setupLogoutHandler();
+            }
+            
+            async loadSettings() {
+                try {
+                    const doc = await db.collection('settings').doc('global').get();
+                    
+                    if (doc.exists) {
+                        this.settings = doc.data();
+                        this.populateForms();
+                    } else {
+                        this.settings = this.getDefaultSettings();
+                        await this.saveSettings();
+                    }
+                } catch (error) {
+                    console.error('Error loading settings:', error);
+                    this.showError('Failed to load settings');
+                }
+            }
+            
+            getDefaultSettings() {
+                return {
+                    toolkitName: 'Dark Tech Zone Toolkit',
+                    toolkitTagline: 'Powered by Dark Tech Zone',
+                    welcomeMessage: 'Welcome to the Dark Tech Zone Toolkit.',
+                    broadcastMessage: 'New tools added weekly!',
+                    footerText: '© 2024 Dark Tech Zone Toolkit. All rights reserved.',
+                    whatsappChannel: 'https://whatsapp.com/channel/0029VbBqOAI9sBI1uo6ixO3E',
+                    contactEmail: '',
+                    maintenanceMode: false,
+                    maintenanceMessage: 'System is under maintenance.',
+                    showBroadcast: true,
+                    showWelcome: true,
+                    colorTheme: 'neon',
+                    darkMode: true,
+                    animations: true,
+                    toolIcons: true,
+                    fontFamily: 'mono',
+                    updatedAt: new Date(),
+                    updatedBy: auth.currentUser?.uid
+                };
+            }
+            
+            populateForms() {
+                // General settings
+                document.getElementById('toolkit-name').value = this.settings.toolkitName || '';
+                document.getElementById('maintenance-mode').checked = this.settings.maintenanceMode || false;
+                document.getElementById('whatsapp-channel').value = this.settings.whatsappChannel || '';
+                
+                // Content settings
+                document.getElementById('welcome-message').value = this.settings.welcomeMessage || '';
+                document.getElementById('broadcast-message').value = this.settings.broadcastMessage || '';
+            }
+            
+            setupEventListeners() {
+                // Settings tabs
+                document.querySelectorAll('.settings-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => this.switchTab(e.target));
+                });
+                
+                // Save settings button
+                document.getElementById('save-settings').addEventListener('click', () => this.saveAllSettings());
+                
+                // Reset settings button
+                document.getElementById('reset-settings').addEventListener('click', () => this.resetToDefaults());
+            }
+            
+            setupLogoutHandler() {
+                document.getElementById('admin-logout').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await auth.signOut();
+                        localStorage.removeItem('admin_session');
+                        window.location.href = '/admin.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        alert('Logout failed. Please try again.');
+                    }
+                });
+            }
+            
+            switchTab(button) {
+                document.querySelectorAll('.settings-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                document.querySelectorAll('.settings-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                button.classList.add('active');
+                const tabId = button.dataset.tab;
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            }
+            
+            async saveAllSettings() {
+                if (this.isLoading) return;
+                
+                const saveBtn = document.getElementById('save-settings');
+                const originalText = saveBtn.innerHTML;
+                
+                try {
+                    this.isLoading = true;
+                    saveBtn.disabled = true;
+                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    
+                    // Collect settings
+                    const settings = {
+                        toolkitName: document.getElementById('toolkit-name').value.trim(),
+                        maintenanceMode: document.getElementById('maintenance-mode').checked,
+                        whatsappChannel: document.getElementById('whatsapp-channel').value.trim(),
+                        welcomeMessage: document.getElementById('welcome-message').value.trim(),
+                        broadcastMessage: document.getElementById('broadcast-message').value.trim(),
+                        updatedAt: new Date(),
+                        updatedBy: auth.currentUser?.uid
+                    };
+                    
+                    // Save to Firestore
+                    await db.collection('settings').doc('global').set(settings, { merge: true });
+                    
+                    // Update local settings
+                    this.settings = settings;
+                    
+                    this.showSuccess('Settings saved successfully');
+                    
+                } catch (error) {
+                    console.error('Error saving settings:', error);
+                    this.showError('Failed to save settings');
+                } finally {
+                    this.isLoading = false;
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = originalText;
+                }
+            }
+            
+            async resetToDefaults() {
+                if (!confirm('Reset all settings to defaults?')) return;
+                
+                try {
+                    const defaultSettings = this.getDefaultSettings();
+                    await db.collection('settings').doc('global').set(defaultSettings);
+                    
+                    this.settings = defaultSettings;
+                    this.populateForms();
+                    
+                    this.showSuccess('Settings reset to defaults');
+                } catch (error) {
+                    console.error('Error resetting settings:', error);
+                    this.showError('Failed to reset settings');
+                }
+            }
+            
+            async resetAllTools() {
+                if (!confirm('WARNING: This will delete ALL tools and hosted HTML content.\n\nThis action cannot be undone.\n\nAre you sure?')) {
+                    return;
+                }
+                
+                try {
+                    const toolsSnapshot = await db.collection('tools').get();
+                    const batch = db.batch();
+                    toolsSnapshot.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    
+                    await batch.commit();
+                    this.showSuccess('All tools have been deleted');
+                } catch (error) {
+                    console.error('Error resetting tools:', error);
+                    this.showError('Failed to reset tools');
+                }
+            }
+            
+            showSuccess(message) {
+                this.showAlert(message, 'success');
+            }
+            
+            showError(message) {
+                this.showAlert(message, 'error');
+            }
+            
+            showAlert(message, type) {
+                const alert = document.createElement('div');
+                alert.className = `admin-alert alert-${type}`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                alert.style.cssText = `
+                    padding: var(--spacing-md);
+                    border-radius: var(--border-radius-md);
+                    margin-bottom: var(--spacing-md);
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-sm);
+                    animation: slideIn 0.3s ease;
+                    background: ${type === 'success' ? 'rgba(0, 255, 0, 0.1)' : 'rgba(255, 51, 51, 0.1)'};
+                    border: 1px solid ${type === 'success' ? 'var(--neon-green)' : 'var(--accent-red)'};
+                    color: ${type === 'success' ? 'var(--neon-green)' : 'var(--accent-red)'};
+                `;
+                
+                const container = document.querySelector('.settings-container');
+                if (container) {
+                    container.insertBefore(alert, container.firstChild);
+                }
+                
+                setTimeout(() => {
+                    alert.remove();
+                }, 5000);
+            }
+        }
+        
+        // Initialize settings manager
+        document.addEventListener('DOMContentLoaded', () => {
+            window.settingsManager = new SettingsManager();
+        });
+    </script>
+</body>
+</html>
